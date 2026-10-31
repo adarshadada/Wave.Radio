@@ -1,2 +1,0 @@
-# Wave.Radio
-Radio app
