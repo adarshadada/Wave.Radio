@@ -1,0 +1,7 @@
+/* wave.radio · css/notifications.css · bell, badge and notification list */
+.bell{position:relative;width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--line);background:var(--card);border-radius:10px;color:var(--ink)}
+.bell[hidden]{display:none}.bell svg{width:22px;height:22px}
+.bell .nb{position:absolute;top:-7px;right:-7px;min-width:20px;height:20px;padding:0 5px;border-radius:6px;background:#ff3b5c;color:#fff;font:700 12px/20px 'DM Sans',system-ui,sans-serif;text-align:center}
+.nrow{display:block;width:100%;text-align:left;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--card);margin-bottom:8px}
+.nrow.un{border-color:var(--ink)}.nrow b{display:block;margin-bottom:2px}.nrow>span{display:block;color:var(--mute);overflow-wrap:anywhere}.nrow small{color:var(--mute);font-size:12px}
+.nk{display:inline-block;font-size:11px;font-weight:700;background:var(--accent);color:var(--on);padding:1px 8px;border-radius:6px;margin-right:8px;vertical-align:1px}

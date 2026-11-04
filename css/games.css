@@ -1,0 +1,13 @@
+/* wave.radio · css/games.css · game cards, lobbies, morse and tiny ham */
+.gi{width:56px;height:56px;border-radius:18px;background:#fff;display:grid;place-items:center;margin-bottom:6px}.gi img{width:40px;height:40px;display:block}
+.gk{font-style:normal;font-size:11px;font-weight:700;background:rgba(0,0,0,.16);padding:2px 10px;border-radius:6px;align-self:flex-start}
+.room{display:flex;align-items:baseline;gap:12px}.room small{color:var(--mute)}.room b{font:800 46px 'Bricolage Grotesque',sans-serif;letter-spacing:8px}
+.plist{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.pl{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:5px 14px;font-weight:500}
+.morse{font:800 40px/1.25 'Bricolage Grotesque',sans-serif;letter-spacing:6px;text-align:center;padding:18px 8px;background:var(--card);border:1px solid var(--line);border-radius:20px;margin:10px 0;word-break:break-all;min-height:72px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}.opts .opt{margin:0;text-align:center;font:800 30px 'Bricolage Grotesque',sans-serif;padding:14px}
+.meter{height:18px;border-radius:99px;background:var(--line);overflow:hidden;margin:12px 0 6px}.meter i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .1s}
+.bd{margin-top:14px}.br{display:flex;gap:10px;align-items:center;padding:8px 12px;border:1px solid var(--line);border-radius:14px;background:var(--card);margin-bottom:6px}.br b{width:22px}.br span{flex:1}.br i{font-style:normal;font-weight:700}
+.keyr{margin-top:14px}.k{width:auto;display:inline-block;margin:0 6px 6px 0;padding:10px 14px}
+.mz{display:block;letter-spacing:3px;font-weight:700;opacity:.85;word-break:break-all}
+.chat p .pm{margin:4px 0 0 8px;font-size:12px;border:1px solid currentColor;border-radius:10px;padding:2px 10px;opacity:.7;background:none}
+.morse,.mz{white-space:pre-wrap}

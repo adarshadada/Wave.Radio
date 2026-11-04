@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>wave.radio admin</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23c8f54b'/%3E%3Cpath d='M12 34c5-12 10-12 15 0s10 12 15 0 6-8 10-4' fill='none' stroke='%23111' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<style>
+:root{--bg:#f5f4ef;--card:#fff;--ink:#14131a;--mute:#6b6977;--line:#e4e2da;--accent:#c8f54b;--red:#e5173f}
+@media (prefers-color-scheme:dark){:root{--bg:#0c0c10;--card:#16161c;--ink:#f3f2f7;--mute:#9694a3;--line:#26262f;--red:#ff5272}}
+*{box-sizing:border-box;margin:0}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{background:var(--bg);color:var(--ink);font:400 15px/1.5 'DM Sans',system-ui,sans-serif;max-width:960px;margin:auto;padding:14px 16px 60px}
+h1,h2,.disp{font-family:'Bricolage Grotesque','DM Sans',system-ui,sans-serif;letter-spacing:-.02em}
+button,input,textarea,select{font:inherit;color:inherit}button{cursor:pointer;border:0;background:none}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+header{display:flex;align-items:center;gap:10px;padding:4px 0 14px}header .brand{flex:1;font-weight:800;font-size:20px;display:flex;align-items:center;gap:10px}
+header svg{width:36px;height:36px}.tag{background:var(--ink);color:var(--bg);font-size:11px;padding:2px 8px;border-radius:6px;font-weight:700}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;max-width:420px;margin:40px auto}
+.card h2{font-size:26px;margin-bottom:8px}label{display:block;font-weight:500;margin:12px 0 4px;font-size:14px}
+input,textarea,select{width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:14px;padding:11px 14px}
+.btn{background:var(--accent);color:#14131a;font-weight:700;padding:10px 18px;border-radius:10px}.btn.ghost{background:none;border:1.5px solid var(--line);color:var(--ink)}
+.tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:16px;scrollbar-width:none}
+.tabs button{flex:none;padding:8px 16px;border-radius:10px;font-weight:700;color:var(--mute);border:1px solid var(--line);background:var(--card)}
+.tabs button.on{background:var(--accent);color:#14131a;border-color:var(--accent)}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px}.stat b{display:block;font:800 34px/1.1 'Bricolage Grotesque',sans-serif}.stat span{color:var(--mute);font-size:13px}
+.row{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-top:10px}
+.row .t{flex:1;min-width:0}.row b{display:block;overflow:hidden;text-overflow:ellipsis}.row small{display:block;color:var(--mute);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ac{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.b{padding:6px 12px;border-radius:10px;border:1.5px solid var(--line);font-weight:700;font-size:13px}.b.danger{color:var(--red);border-color:var(--red)}.b.warn{background:var(--accent);color:#14131a;border-color:var(--accent)}
+em{font-style:normal;font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;background:var(--red);color:#fff;margin-left:6px}
+.more{display:block;margin:14px auto 0}.empty{color:var(--mute);padding:16px;border:1.5px dashed var(--line);border-radius:16px;margin-top:10px}
+#toast{position:fixed;left:0;right:0;bottom:calc(20px + env(safe-area-inset-bottom,0px));text-align:center;pointer-events:none}
+#toast span{display:none;background:var(--ink);color:var(--bg);padding:9px 18px;border-radius:10px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand disp"><svg viewBox="0 0 64 64"><rect width="64" height="64" rx="18" fill="#c8f54b"/><path d="M12 34c5-12 10-12 15 0s10 12 15 0 6-8 10-4" fill="none" stroke="#111" stroke-width="6" stroke-linecap="round"/></svg>wave.radio <span class="tag">ADMIN</span></div>
+  <span id="who" style="color:var(--mute);font-size:13px"></span><button class="btn ghost" id="out" hidden>Sign out</button>
+</header>
+
+<div class="card" id="login" hidden><h2 class="disp">Admin sign in</h2><p style="color:var(--mute)">Use an account that was added to the admins table.</p>
+  <label for="e">Email</label><input id="e" type="email" autocomplete="email"><label for="p">Password</label><input id="p" type="password" autocomplete="current-password">
+  <p id="lm" style="color:var(--red);font-size:13px;margin-top:8px"></p><button class="btn" id="go" style="margin-top:14px;width:100%">Sign in</button></div>
+<div class="card" id="denied" hidden><h2 class="disp">Not an admin</h2><p style="color:var(--mute)">This account isn’t in the admins table. Run the last step of wave.radio-v5-upgrade.sql with your email, then sign in again.</p></div>
+
+<div id="app" hidden>
+  <div class="tabs" id="tabs"><button data-t="ov" class="on">Overview</button><button data-t="u">Users</button><button data-t="s">Stations</button><button data-t="r">Rooms</button><button data-t="m">Chat</button><button data-t="n">Notify</button><button data-t="f">Feedback</button></div>
+  <div id="p-ov"><div class="stats" id="stats"></div></div>
+  <div id="p-n" hidden>
+    <input id="nq" type="search" placeholder="Find a user to message" aria-label="Find a user">
+    <div id="nres"></div>
+    <div class="row" id="nto" hidden><div class="t"><b id="nwho"></b><small id="nsub">Messages to this user</small></div><div class="ac"><button class="b" id="nclr">Change user</button></div></div>
+    <div id="nthread"></div>
+    <label for="nt">Title</label><input id="nt" maxlength="80" placeholder="Short title">
+    <label for="nb">Message</label><textarea id="nb" maxlength="300" rows="3" placeholder="What do you want to tell them?"></textarea>
+    <label for="nl">When tapped, open</label>
+    <select id="nl"><option value="">Nothing</option><option value="home">Home</option><option value="comm">Community</option><option value="people">People</option><option value="games">Games</option><option value="studio">Studio</option></select>
+    <div class="ac" style="justify-content:flex-start;margin-top:14px"><button class="btn" id="nsend">Send to this user</button><button class="btn ghost" id="nall">Send to everyone</button></div>
+    <p id="nmsg" style="color:var(--mute);font-size:13px;margin-top:8px"></p>
+  </div>
+  <div id="panels"></div>
+</div>
+<div id="toast"><span id="ts"></span></div>
+
+<script>
+const SUPABASE_URL = "https://pwmrxmxtegsjcnfjzszz.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3bXJ4bXh0ZWdzamNuZmp6c3p6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMzNTQ5NTQsImV4cCI6MjEwODkzMDk1NH0.uMpFz-jj0A1Syhue600eX8pOXO2XCoMtMaKVrP8eVrE";
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let sb; try { sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } catch(e){ document.body.innerHTML = '<p style="padding:30px">Couldn’t load Supabase. Check your connection.</p>'; }
+let tt; const toast = m => { const s = $('ts'); s.textContent = m; s.style.display = 'inline-block'; clearTimeout(tt); tt = setTimeout(() => s.style.display = 'none', 3500); };
+const one = x => Array.isArray(x) ? x[0] : x;
+const fresh = s => s && s.is_live && Date.now() - new Date(s.live_at || 0) < 180000;
+const day = t => new Date(t).toLocaleDateString();
+const btn = (a, id, t, c = '') => `<button class="b ${c}" data-a="${a}" data-id="${id}">${t}</button>`;
+
+const CFG = {
+  u:{tbl:'profiles', sel:'*,stations!owner(id,name,tag,is_live,live_at)', find:['username','display_name'], order:[['created_at', false]], ph:'Search users',
+    row:p => { const s = one(p.stations); return `<div class="row"><div class="t"><b>${esc(p.display_name || p.username)}${p.suspended ? '<em>SUSPENDED</em>' : ''}</b><small>@${esc(p.username)} · ${esc(p.country || 'no country')} · joined ${day(p.created_at)}</small><small>${s ? 'wmz/' + esc(s.tag) + ' · ' + esc(s.name) + (fresh(s) ? ' · LIVE' : '') : 'No station'}</small></div>
+      <div class="ac">${fresh(s) ? btn('cut', s.id, 'Cut broadcast', 'warn') : ''}${p.suspended ? btn('uns', p.id, 'Unsuspend') : btn('sus', p.id, 'Suspend')}${btn('ntf', p.id, 'Notify')}${btn('delu', p.id, 'Delete user', 'danger')}</div></div>`; }},
+  s:{tbl:'stations', sel:'*,profiles!owner(username)', find:['name','tag'], order:[['is_live', false], ['created_at', false]], ph:'Search stations or wave tags',
+    row:s => `<div class="row"><div class="t"><b>${esc(s.name)}${fresh(s) ? '<em>LIVE</em>' : ''}</b><small>wmz/${esc(s.tag)} · by @${esc((one(s.profiles) || {}).username)} · ${s.votes || 0} vote${s.votes === 1 ? '' : 's'} · ${esc(s.mode)}</small></div>
+      <div class="ac">${fresh(s) ? btn('cut', s.id, 'Cut broadcast', 'warn') : ''}${btn('dels', s.id, 'Delete station', 'danger')}</div></div>`},
+  r:{tbl:'rooms', sel:'*,profiles!owner(username)', find:['name','topic'], order:[['created_at', false]], ph:'Search rooms',
+    row:r => `<div class="row"><div class="t"><b>${esc(r.name)}</b><small>${esc(r.topic || 'No topic')} · by @${esc((one(r.profiles) || {}).username)} · ${day(r.created_at)}</small></div><div class="ac">${btn('delr', r.id, 'Delete room', 'danger')}</div></div>`},
+  m:{tbl:'messages', sel:'*,profiles!user_id(username)', find:['body'], order:[['created_at', false]], ph:'Search chat messages',
+    row:m => `<div class="row"><div class="t"><b>${esc(m.body)}</b><small>@${esc((one(m.profiles) || {}).username)} · ${esc(m.channel)} · ${new Date(m.created_at).toLocaleString()}</small></div><div class="ac">${btn('delm', m.id, 'Delete', 'danger')}</div></div>`}
+};
+CFG.f = {tbl:'feedback', sel:'*,profiles!user_id(username)', find:['message'], order:[['created_at', false]], ph:'Search feedback',
+  row:f => `<div class="row"><div class="t"><b style="white-space:normal">${esc(f.message)}</b><small>@${esc((one(f.profiles) || {}).username || 'deleted user')} · ${new Date(f.created_at).toLocaleString()}</small></div><div class="ac">${f.user_id ? btn('ntf', f.user_id, 'Reply') : ''}${btn('delf', f.id, 'Delete', 'danger')}</div></div>`};
+const page = {}, qs = {};
+$('panels').innerHTML = Object.keys(CFG).map(k => `<div id="p-${k}" hidden><input id="q-${k}" type="search" placeholder="${CFG[k].ph}" aria-label="${CFG[k].ph}"><div id="l-${k}"></div><button class="btn ghost more" id="m-${k}" hidden>Show more</button></div>`).join('');
+let timer;
+Object.keys(CFG).forEach(k => {
+  $('q-' + k).oninput = () => { clearTimeout(timer); timer = setTimeout(() => { qs[k] = $('q-' + k).value.trim(); load(k, true); }, 350); };
+  $('m-' + k).onclick = () => load(k, false);
+});
+async function load(k, reset){
+  const c = CFG[k], list = $('l-' + k); if (reset){ page[k] = 0; list.innerHTML = ''; }
+  let r = sb.from(c.tbl).select(c.sel).range(page[k], page[k] + 24);
+  if (qs[k]){ const s = qs[k].replace(/[%,()]/g, ''); r = r.or(c.find.map(f => `${f}.ilike.%${s}%`).join(',')); }
+  c.order.forEach(([f, asc]) => r = r.order(f, {ascending:asc}));
+  const x = await r; if (x.error) return toast(x.error.message);
+  page[k] += 25; list.insertAdjacentHTML('beforeend', x.data.map(c.row).join(''));
+  if (!list.children.length) list.innerHTML = '<div class="empty">Nothing here.</div>';
+  $('m-' + k).hidden = x.data.length < 25;
+}
+async function overview(){
+  const cnt = async (t, f) => { let r = sb.from(t).select('*', {count:'exact', head:true}); if (f) r = f(r); return (await r).count ?? 0; };
+  const [u, s, l, r, m, su] = await Promise.all([cnt('profiles'), cnt('stations'), cnt('stations', x => x.eq('is_live', true).gte('live_at', new Date(Date.now() - 180000).toISOString())), cnt('rooms'), cnt('messages'), cnt('profiles', x => x.eq('suspended', true))]);
+  $('stats').innerHTML = [['Users', u], ['Stations', s], ['On air now', l], ['Rooms', r], ['Messages', m], ['Suspended', su]].map(([n, v]) => `<div class="stat"><b>${v}</b><span>${n}</span></div>`).join('');
+}
+function go(t){
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+  ['ov', 'n', ...Object.keys(CFG)].forEach(k => $('p-' + k).hidden = k !== t);
+  t === 'ov' ? overview() : t === 'n' ? nOpen() : load(t, true);
+}
+$('tabs').onclick = e => { const b = e.target.closest('button'); if (b) go(b.dataset.t); };
+
+async function cut(id){
+  const r = await sb.from('stations').update({is_live:false, cut_at:new Date().toISOString()}).eq('id', id);
+  if (r.error) return toast(r.error.message);
+  const ch = sb.channel('live:' + id);
+  await new Promise(res => { setTimeout(res, 4000); ch.subscribe(s => { if (s === 'SUBSCRIBED') res(); }); });
+  for (const ev of ['end', 'admin-cut']) await ch.send({type:'broadcast', event:ev, payload:{}});
+  sb.removeChannel(ch); toast('Broadcast cut. Listeners were disconnected.');
+}
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-a]'); if (!b) return;
+  const a = b.dataset.a, id = b.dataset.id; let r;
+  if (a === 'ntf' || a === 'npick'){ await nPick(id); return go('n'); }
+  if (a === 'cut') await cut(id);
+  else if (a === 'sus' || a === 'uns'){
+    r = await sb.from('profiles').update({suspended:a === 'sus'}).eq('id', id);
+    if (!r.error && a === 'sus'){ const st = (await sb.from('stations').select('id').eq('owner', id).maybeSingle()).data; if (st) await cut(st.id); }
+  }
+  else if (a === 'delu'){ if (!confirm('Delete this user and everything they made? This can’t be undone.')) return; r = await sb.rpc('admin_delete_user', {target:id}); }
+  else if (a === 'dels'){ if (!confirm('Delete this station?')) return; r = await sb.from('stations').delete().eq('id', id); }
+  else if (a === 'delr'){ if (!confirm('Delete this room and its messages?')) return; r = await sb.from('rooms').delete().eq('id', id); }
+  else if (a === 'delm') r = await sb.from('messages').delete().eq('id', id);
+  else if (a === 'delf'){ if (!confirm('Delete this message?')) return; r = await sb.from('feedback').delete().eq('id', id); }
+  if (r && r.error) return toast(r.error.message);
+  if (r) toast('Done.');
+  const t = document.querySelector('#tabs .on').dataset.t; go(t);
+});
+
+/* ---- Notify: pick a user, see what was sent, send a new note ---- */
+let nSel = null, nT;
+async function nPick(id){
+  const p = (await sb.from('profiles').select('id,username,display_name').eq('id', id).maybeSingle()).data;
+  if (!p) return toast('User not found.'); nSel = p;
+}
+function nShow(){
+  $('nto').hidden = !nSel; $('nq').hidden = !!nSel; $('nres').innerHTML = ''; $('nsend').disabled = !nSel;
+  if (nSel) $('nwho').textContent = (nSel.display_name || nSel.username) + ' (@' + nSel.username + ')';
+}
+async function nThread(){
+  if (!nSel) return void ($('nthread').innerHTML = '');
+  const x = await sb.from('notifications').select('*').eq('user_id', nSel.id).eq('kind', 'admin').eq('sender', (await sb.auth.getSession()).data.session.user.id).order('created_at', {ascending:false}).limit(15);
+  $('nthread').innerHTML = (x.data || []).length ? '<h3 class="disp" style="margin:14px 0 4px;font-size:18px">Sent to this user</h3>' + x.data.map(n => `<div class="row"><div class="t"><b>${esc(n.title)}</b><small style="white-space:normal">${esc(n.body)}</small><small>${new Date(n.created_at).toLocaleString()} · ${n.read ? 'Seen' : 'Not seen yet'}</small></div></div>`).join('') : '<div class="empty">Nothing sent to this user yet.</div>';
+}
+function nOpen(){ nShow(); nThread(); }
+$('nq').oninput = () => { clearTimeout(nT); nT = setTimeout(async () => {
+  const q = $('nq').value.trim().replace(/[%,()]/g, ''); if (!q) return void ($('nres').innerHTML = '');
+  const x = await sb.from('profiles').select('id,username,display_name').or(`username.ilike.%${q}%,display_name.ilike.%${q}%`).limit(8);
+  $('nres').innerHTML = (x.data || []).map(p => `<div class="row"><div class="t"><b>${esc(p.display_name || p.username)}</b><small>@${esc(p.username)}</small></div><div class="ac">${btn('npick', p.id, 'Select')}</div></div>`).join('') || '<div class="empty">No users found.</div>';
+}, 300); };
+$('nclr').onclick = () => { nSel = null; nOpen(); };
+async function nSend(everyone){
+  const t = $('nt').value.trim(), b = $('nb').value.trim(), l = $('nl').value || null, m = $('nmsg');
+  if (!t || !b) return void (m.textContent = 'Add a title and a message.');
+  if (!everyone && !nSel) return void (m.textContent = 'Pick a user first.');
+  if (everyone && !confirm('Send this to every user?')) return;
+  const r = await sb.rpc('admin_notify', {p_target:everyone ? null : nSel.id, p_title:t, p_body:b, p_link:l});
+  if (r.error) return void (m.textContent = r.error.message + ' (run wave.radio-v6-notifications.sql if you have not)');
+  m.textContent = 'Sent to ' + r.data + ' user' + (r.data === 1 ? '' : 's') + '.'; $('nt').value = $('nb').value = ''; nThread();
+}
+$('nsend').onclick = () => nSend(false); $('nall').onclick = () => nSend(true);
+
+const show = v => { ['login', 'denied', 'app'].forEach(x => $(x).hidden = x !== v); $('out').hidden = v === 'login'; };
+async function boot(){
+  const s = (await sb.auth.getSession()).data.session; if (!s) return show('login');
+  $('who').textContent = s.user.email;
+  const r = await sb.rpc('is_admin'); if (r.data !== true) return show('denied');
+  show('app'); go('ov');
+}
+$('go').onclick = async () => {
+  $('lm').textContent = '';
+  const r = await sb.auth.signInWithPassword({email:$('e').value.trim(), password:$('p').value});
+  if (r.error) return void ($('lm').textContent = r.error.message); boot();
+};
+$('p').onkeydown = e => { if (e.key === 'Enter') $('go').click(); };
+$('out').onclick = async () => { await sb.auth.signOut(); $('who').textContent = ''; show('login'); };
+boot();
+</script>
+</body>
+</html>

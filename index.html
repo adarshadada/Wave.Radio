@@ -1,6 +1,171 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>wave.radio</title>
-<style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#c8f54b;color:#14131a;font-family:system-ui,sans-serif;text-align:center;padding:24px}
-button{font:inherit;font-weight:700;background:#14131a;color:#fff;border:0;border-radius:10px;padding:12px 22px;margin-top:16px}</style></head>
-<body><main><h1>wave.radio</h1><p>The app could not reach the internet.</p><button onclick="location.reload()">Try again</button></main></body></html>
+<meta name="description" content="Listen to live radio from around the world, start your own station, chat in rooms and play multiplayer games.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<meta name="theme-color" content="#f5f4ef" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c0c10" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/animations.css">
+<link rel="stylesheet" href="css/games.css">
+<link rel="stylesheet" href="css/notifications.css">
+<link rel="stylesheet" href="css/website.css">
+</head>
+<body>
+<header>
+  <div class="brand disp"><div class="mark" id="mk"></div>wave.radio</div>
+  <span class="net" id="net" hidden></span><button class="bell" id="bell" aria-label="Notifications" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9a6 6 0 0112 0c0 6 2 7 2 7H4s2-1 2-7"/><path d="M10 20a2 2 0 004 0"/></svg><span class="nb" id="bellN" hidden>0</span></button><button class="me out" id="me">Sign in</button>
+</header>
+<div class="note" id="banner" hidden style="margin-bottom:14px"></div>
+<div class="seg" id="seg" role="tablist"><button data-g="home" class=on><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></button><button data-g="listen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="12" rx="3"/><path d="M7 8l10-4"/><circle cx="9" cy="14" r="2"/><path d="M15 12h3M15 16h3"/></svg><span>Listen</span></button><button data-g="games"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 10v5M4.5 12.5h5M15.5 11h.01M18 14h.01"/></svg><span>Games</span></button><button data-g="social"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.2-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><path d="M16 4.6a3.5 3.5 0 010 6.8M18 14.8c2 .6 3.2 2.3 3.5 5.2"/></svg><span>Social</span></button><button data-g="studio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg><span>Studio</span></button></div>
+
+<div class="sub" id="sub" hidden></div>
+<main>
+<section class="tab on" id="t-home">
+  <div class="hero2"><svg class="decor" viewBox="0 0 200 80" aria-hidden="true"><path d="M0 40c25-50 50-50 75 0s50 50 75 0 35-30 50-10" fill="none" stroke="#14131a" stroke-width="14" stroke-linecap="round"/></svg>
+    <small>wave.radio</small><h1 class="disp" id="hHi">Welcome</h1><p>Listen to live radio stations from around the world, run your own station, or play a game with friends.</p>
+    <div class="ctl"><button class="btn dark" data-go="real">Listen now</button><button class="btn dark ghost2" data-go="studio">Start broadcasting</button></div></div>
+  <div class="sec"><h3 class="disp">On air now</h3><button data-go="comm">See all</button></div><div class="hs" id="hOn"></div>
+  <div class="ad" data-ad></div>
+  <div class="sec"><h3 class="disp">Top stations</h3><button data-go="comm">See all</button></div><div class="hs" id="hTop"></div>
+  <div class="sec"><h3 class="disp">Pick a mood</h3></div><div class="chips" id="hMood" style="flex-wrap:wrap"></div>
+  <div class="sec"><h3 class="disp">Play</h3><button data-go="games">All games</button></div><div class="hs" id="hGames"></div>
+</section>
+<section class="tab" id="t-real">
+  <div class="sh"><h2>Real FM</h2></div>
+  <p class="lead">Live stations from around the world, streamed straight from their broadcasters.</p>
+  <input id="rq" type="search" placeholder="Search stations, cities or countries" aria-label="Search real stations">
+  <div class="chips" id="gen"></div>
+  <div class="ad" data-ad></div>
+  <div class="grid" id="rg"></div><button class="btn ghost more" id="rm" hidden>Show more</button>
+</section>
+<section class="tab" id="t-comm">
+  <div class="sh"><h2>Community</h2><button class="btn" id="goStudio">Start yours</button></div>
+  <p class="lead">Stations run by listeners like you. Each one has its own wave tag, like <b>wmz/ember-fox</b>, instead of a number.</p>
+  <input id="cq" type="search" placeholder="Search by name or wave tag" aria-label="Search community stations">
+  <div class="pf"><select id="cSortSel" aria-label="Sort stations"><option value="live">On air first</option><option value="votes">Most upvoted</option><option value="new">Newest</option></select><select id="cGenSel" aria-label="Genre"></select></div>
+  <div class="ad" data-ad></div>
+  <div class="onair" id="oa" aria-label="On air now"></div>
+  <div class="grid big" id="cg"></div><button class="btn ghost more" id="cm" hidden>Show more</button>
+</section>
+<section class="tab" id="t-rooms">
+  <div class="sh"><h2>Rooms</h2><button class="btn" id="newRm">Start a room</button></div>
+  <div id="rl"></div>
+</section>
+<section class="tab" id="t-games">
+  <div class="sh"><h2>Games</h2></div><p class="lead">Quick games while the music plays. Your best scores are saved on this device.</p>
+  <div class="grid big" id="gg"></div>
+  <div class="ad" data-ad></div>
+</section>
+<section class="tab" id="t-people">
+  <div class="sh"><h2>People</h2></div>
+  <p class="lead">Find listeners and station owners, add friends and see who is on air.</p>
+  <input id="fq" type="search" placeholder="Search people, usernames or stations" aria-label="Search people">
+  <div class="pf"><select id="fCo" aria-label="Country"></select><select id="fSort" aria-label="Sort by"><option value="votes">Most upvoted station</option><option value="new">Newest</option><option value="az">A to Z</option></select></div>
+  <div class="chips" id="fGen"></div>
+  <div class="chips" id="fTog"><button data-k="friends">Friends only</button><button data-k="live">On air now</button></div>
+  <div id="frq"></div><div id="plist"></div><button class="btn ghost more" id="pm" hidden>Show more</button>
+</section>
+<section class="tab" id="t-studio"><div id="sd"></div></section>
+<footer class="foot"><a href="about.html">About</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a></footer>
+</main>
+
+<div id="toast"><span id="ts"></span></div>
+<div class="player" id="pl"><div class="lg" id="pArt"></div><div class="t"><b id="pT"></b><small id="pS"></small></div>
+  <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><button class="up" id="pVote" hidden aria-label="Upvote station">Upvote (0)</button><button class="sb" id="pChat" hidden>Chat</button><button class="pb" id="pBtn" aria-label="Play or pause"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg></button><button class="sb" id="pX" aria-label="Close player"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+<input type="file" id="file" accept="image/*" hidden>
+
+<dialog id="dAuth"><h3 id="aT">Sign in</h3>
+  <div id="aDemo" class="note" hidden>Supabase isn’t connected, so you’re in demo mode. Your profile stays on this device.</div>
+  <div id="aMail"><label for="aE">Email</label><input id="aE" type="email" autocomplete="email"><label for="aP">Password</label><input id="aP" type="password" autocomplete="current-password"></div>
+  <div id="aName"><label for="aU">Username</label><input id="aU" maxlength="24" placeholder="night.owl"></div>
+  <div class="msg" id="aM"></div>
+  <div id="aCode" hidden><label for="aK">Code from your email</label><input id="aK" inputmode="numeric" maxlength="10" autocomplete="one-time-code" placeholder="123456"><button type="button" class="btn" id="aVerify" style="margin-top:10px;width:100%">Verify code</button></div>
+  <div id="aNew" hidden><label for="aNP">New password</label><input id="aNP" type="password" autocomplete="new-password" placeholder="6+ characters"><button type="button" class="btn" id="aSetPw" style="margin-top:10px;width:100%">Save new password</button></div>
+  <div class="ctl" id="aAux"><button type="button" class="btn ghost sm" id="aForgot">Forgot password?</button><button type="button" class="btn ghost sm" id="aResend">Resend confirmation email</button></div>
+  <p class="msg">By continuing you agree to the <a href="terms.html" style="color:var(--ink);font-weight:700">terms</a> and <a href="privacy.html" style="color:var(--ink);font-weight:700">privacy policy</a>.</p>
+  <div class="acts"><button class="btn ghost" id="aSwap">Create account</button><button class="btn" id="aGo">Sign in</button></div></dialog>
+
+<dialog id="dProf"><h3>Your profile</h3>
+  <div id="pImgs"></div>
+  <div class="two"><div><label for="pD">Display name</label><input id="pD" maxlength="40"></div><div><label for="pU">Username</label><input id="pU" maxlength="24"></div></div>
+  <label for="pB">Bio</label><textarea id="pB" rows="3" maxlength="300"></textarea>
+  <label for="pL">Link</label><input id="pL" type="url" placeholder="https://">
+  <label for="pCo">Country</label><select id="pCo"></select>
+  <label>Notifications</label>
+  <label class="tog"><input type="checkbox" id="nC"><span>New chat messages<small>In your station and room chats, and chats you joined.</small></span></label>
+  <label class="tog"><input type="checkbox" id="nV"><span>Stations going live<small>Friends and stations you upvoted.</small></span></label>
+  <label class="tog"><input type="checkbox" id="nF"><span>Friend requests</span></label>
+  <label for="pC">Accent colour</label><input id="pC" type="color" value="#c8f54b">
+  <div class="ctl" style="margin-top:14px"><button type="button" class="btn ghost sm" id="pFb">Send feedback</button><button type="button" class="btn ghost sm danger" id="pDel">Delete account</button></div><div class="msg" id="pM"></div>
+  <div class="acts"><button class="btn ghost" id="pOut">Sign out</button><button class="btn" id="pSave">Save profile</button></div></dialog>
+
+<dialog id="dNotif"><h3>Notifications</h3>
+  <div class="ctl"><button class="btn ghost sm" id="nAll">Mark all read</button><button class="btn ghost sm" id="nDev" hidden>Turn on push alerts</button><button class="btn ghost sm" id="nChk">Check push status</button></div>
+  <div class="msg" id="nDiag" style="white-space:pre-line"></div>
+  <div id="nL" style="margin-top:12px"></div>
+  <div class="acts"><button class="btn ghost" data-close>Close</button></div></dialog>
+
+<dialog id="dFb"><h3>Send feedback</h3>
+  <p class="msg">Tell the wave.radio team about a bug, an idea or a problem with content.</p>
+  <label for="fbT">Message</label><textarea id="fbT" rows="5" maxlength="1000"></textarea>
+  <div class="msg" id="fbM"></div>
+  <div class="acts"><button class="btn ghost" data-close>Cancel</button><button class="btn" id="fbGo">Send</button></div></dialog>
+
+<dialog id="dGame"><h3 id="gT"></h3><div id="gB"></div><div class="acts"><button class="btn ghost" data-close>Close</button></div></dialog>
+
+<dialog id="dDel"><h3>Delete account</h3>
+  <p class="msg">This permanently deletes your profile, station, rooms, messages, friends and votes. It can’t be undone. Type your username <b id="dU"></b> to confirm.</p>
+  <input id="dI" autocomplete="off" aria-label="Type your username"><div class="msg" id="dM"></div>
+  <div class="acts"><button class="btn ghost" data-close>Cancel</button><button class="btn" id="dGo" style="background:#ff3b5c;color:#fff">Delete forever</button></div></dialog>
+
+<dialog id="dStn"><h3 id="sTitle">Start your station</h3>
+  <div id="sImgs"></div>
+  <label for="sN">Station name</label><input id="sN" maxlength="40">
+  <label for="sT">Wave tag</label><div class="two"><input id="sT" maxlength="24" placeholder="ember-fox"><button type="button" class="btn ghost fit" id="sShuf">Shuffle</button></div>
+  <div class="msg">Your frequency: <b id="sPrev">wmz/</b>. Lowercase letters, numbers and dashes.</div>
+  <label for="sD">Description</label><textarea id="sD" rows="3" maxlength="400"></textarea>
+  <label for="sG">Genres (comma separated)</label><input id="sG" placeholder="lofi, talk, indie">
+  <label for="sC">Accent colour</label><input id="sC" type="color" value="#c8f54b">
+  <label for="sMode">How will you broadcast?</label>
+  <select id="sMode"><option value="live">From my browser: audio files and microphone</option><option value="stream">An external stream URL (Icecast, Shoutcast)</option></select>
+  <div id="sUw" hidden><label for="sU">Stream URL (https)</label><input id="sU" type="url" placeholder="https://example.com/live.mp3"></div>
+  <div class="msg" id="sM"></div>
+  <div class="acts"><button class="btn ghost" data-close>Cancel</button><button class="btn" id="sGo">Save station</button></div></dialog>
+
+<dialog id="dRm"><h3>Start a room</h3>
+  <label for="rN">Room name</label><input id="rN" maxlength="40"><label for="rT">Topic</label><input id="rT" maxlength="80">
+  <div class="acts"><button class="btn ghost" data-close>Cancel</button><button class="btn" id="rGo">Open room</button></div></dialog>
+
+<dialog id="dChat"><h3 id="cT"></h3><div class="msg" id="cS" style="margin:0 0 10px"></div><input id="cF" type="search" placeholder="Search this chat" aria-label="Search messages" style="margin-bottom:10px"><div class="chat" id="cL"></div>
+  <div class="two" style="margin-top:10px"><input id="cI" maxlength="200" placeholder="Say something"><button class="btn fit" id="cSend">Send</button></div>
+  <div class="acts"><button class="btn ghost" data-close>Close</button></div></dialog>
+
+<script src="js/config.js"></script>
+<script src="js/core.js"></script>
+<script src="js/backend.js"></script>
+<script src="js/player.js"></script>
+<script src="js/stations.js"></script>
+<script src="js/account.js"></script>
+<script src="js/studio.js"></script>
+<script src="js/social.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/push.js"></script>
+<script src="js/feedback.js"></script>
+<script src="js/ads.js"></script>
+<script src="js/home.js"></script>
+<script src="js/games.js"></script>
+<script src="js/multiplayer.js"></script>
+<script src="js/morse.js"></script>
+<script src="js/tinyham.js"></script>
+<script src="js/script.js"></script>
+</body>
+</html>

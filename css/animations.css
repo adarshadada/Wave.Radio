@@ -1,0 +1,54 @@
+/* wave.radio · animations.css
+   Motion only. Respects "reduce motion". Loaded after style.css. */
+:root{--ease:cubic-bezier(.2,.8,.2,1)}
+
+@keyframes tabIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes rise{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes popIn{from{opacity:0;transform:translateY(12px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes drift{from{transform:translateX(0) rotate(0)}to{transform:translateX(-36px) rotate(-2deg)}}
+@keyframes blink{50%{opacity:.5}}
+@keyframes bounce{0%{transform:scale(.92)}60%{transform:scale(1.05)}100%{transform:scale(1)}}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* page + list entrances (backwards fill so hover transforms still work afterwards) */
+.tab.on{animation:fadeIn .2s ease}
+.grid>*,.hs>*,.row,.prow,.q{animation:fadeIn .25s ease backwards}
+
+
+/* dialogs, player, toast */
+dialog[open]{animation:popIn .28s var(--ease)}
+dialog[open]::backdrop{animation:fadeIn .25s ease}
+.player.on{animation:slideUp .35s var(--ease)}
+#toast span{animation:popIn .25s var(--ease)}
+
+/* navigation + buttons */
+.seg button svg{transition:background .25s var(--ease),color .25s var(--ease),transform .2s var(--ease)}
+.seg button:active svg{transform:scale(.86)}
+.sub button{transition:background .2s,color .2s,transform .15s}
+.btn,.b,.chips button{transition:transform .15s var(--ease),filter .15s,background .2s,border-color .2s}
+.btn:active,.b:active,.chips button:active{transform:scale(.96)}
+
+/* live + status */
+.live{animation:blink 1.6s ease-in-out infinite}
+.card.on{animation:bounce .3s var(--ease)}
+.skeleton{background:var(--line);border-radius:16px;min-height:80px;animation:blink 1.2s ease-in-out infinite}
+.spin{animation:spin .8s linear infinite}
+
+/* games */
+.gcard{transition:transform .2s var(--ease)}.gcard:active{transform:scale(.97)}
+.mc{transition:transform .2s var(--ease),background .2s,color .2s}.mc:active{transform:scale(.92)}
+.mc.up{animation:bounce .3s var(--ease)}.mc.ok{animation:bounce .45s var(--ease)}
+.opt{transition:background .2s,border-color .2s,transform .15s}.opt:active{transform:scale(.98)}
+.opt.ok{animation:bounce .35s var(--ease)}.opt.no{animation:shake .4s}
+.tap{transition:background .15s,transform .1s}.tap:active{transform:scale(.98)}.tap.g{animation:bounce .2s var(--ease)}
+
+@media (hover:hover){
+  .btn:hover{filter:brightness(1.06)}
+  .card:hover,.row:hover,.gcard:hover{transform:translateY(-3px)}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}

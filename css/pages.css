@@ -1,0 +1,9 @@
+/* wave.radio · css/pages.css · About and Privacy pages */
+body{padding-bottom:60px;max-width:760px;overscroll-behavior-y:auto}
+.ph{display:flex;align-items:center;gap:10px;padding:6px 0 22px}.ph a{color:inherit;text-decoration:none}.ph img{width:40px;height:40px}.ph b{font:800 22px 'Bricolage Grotesque',sans-serif;flex:1}
+.page h1{font:800 clamp(34px,8vw,52px)/1.05 'Bricolage Grotesque',sans-serif;letter-spacing:-.03em;margin:8px 0 12px}
+.page h2{font:800 24px 'Bricolage Grotesque',sans-serif;margin:30px 0 8px}
+.page p,.page li{color:var(--mute);margin-bottom:10px}.page ul{padding-left:20px}.page a{color:var(--ink);font-weight:700}
+.feats{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin-top:14px}
+.feat{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px}.feat b{display:block;margin-bottom:4px}.feat span{color:var(--mute);font-size:14px}
+.stamp{color:var(--mute);font-size:13px}
