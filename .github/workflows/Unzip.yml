@@ -1,0 +1,21 @@
+name: Unzip project
+on:
+  push:
+    paths: ['wave-radio-project.zip']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  unzip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          unzip -o wave-radio-project.zip
+          rm wave-radio-project.zip
+      - run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add -A
+          git commit -m "Unzip project" || exit 0
+          git push
